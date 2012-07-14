@@ -1,5 +1,16 @@
 require 'rubygems'
-require 'ruby-growl'
+require 'ruby_gntp'
 
-g = Growl.new("71.193.201.169", "ruby-growl", ["ruby-growl Notification"], ["ruby-growl Notification"], nil)
-g.notify("ruby-growl Notification", "It Came From Ruby-Growl", "Greetings!", 1, true)
+# -- Standard way
+growl = GNTP.new("Ruby/GNTP self test", '192.168.2.1')
+growl.register({:notifications => [{
+  :name     => "notify",
+  :enabled  => true,
+}]})
+
+growl.notify({
+  :name  => "notify",
+  :title => "Congratulations",
+  :text  => "Congratulations! You have successfully installed ruby_gntp.",
+  :sticky=> true,
+})

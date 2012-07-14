@@ -2,9 +2,9 @@ require 'puppet'
 require 'yaml'
 
 begin
-  require 'ruby-growl'
+  require 'ruby_gntp'
 rescue LoadError => e
-  Puppet.info "You need the `ruby-growl` gem to use the Growl report"
+  Puppet.info "You need the `ruby_gntp` gem to use the Growl report"
 end
 
 Puppet::Reports.register_report(:growl) do
@@ -19,11 +19,39 @@ Puppet::Reports.register_report(:growl) do
   DESC
 
   def process
+    # Make sure that our report handler is registered with Growl
+    g = GNTP.new('Puppet Report Notifications', "#{GROWL_SERVER}")
+    g.register({
+      :notifications => [{
+        :name     => 'Failed Puppet Run',
+        :enabled  => true,
+      },
+      {
+        :name     => 'Puppet Run',
+        :enabled  => true,
+      }]
+    })
+  
     if self.status == 'failed'
-      Puppet.debug "Sending status for #{self.host} to Growl #{GROWL_SERVER}"
-      g = Growl.new("#{GROWL_SERVER}", "Puppet", ["Puppet Notification"], ["Puppet Notification"], nil)
+      Puppet.debug "Sending failed report for #{self.host} to Growl (#{GROWL_SERVER})"
       msg = "Puppet run for #{self.host} #{self.status} at #{Time.now.asctime}"
-      g.notify("Puppet Notification", "Puppet", msg, 1, true)
+      g.notify({
+        :name   => "Failed Puppet Run",
+        :title  => "Failed Puppet Run",
+        :text   => msg,
+        :sticky => true
+      })
+    
+    else
+      Puppet.debug "Sending successful report for #{self.host} to Growl (#{GROWL_SERVER})"
+      msg = "Puppet run for #{self.host} #{self.status} at #{Time.now.asctime}"
+      g.notify({
+        :name   => "Puppet Run",
+        :title  => "Puppet Run",
+        :text   => msg,
+        :sticky => false
+      })
+    
     end
   end
 end
