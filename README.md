@@ -9,15 +9,15 @@ A Puppet report handler for sending notifications of failed runs to growl.
 Requirements
 ------------
 
-* `ruby-growl`
+* `ruby_gntp`
 * `puppet`
 
 Installation & Usage
 --------------------
 
-1.  Install the `ruby-growl` gem on your Puppet master
+1.  Install the `ruby_gntp` gem on your Puppet master
 
-        $ sudo gem install ruby-growl
+        $ sudo gem install ruby_gntp
 
 2.  Install puppet-growl as a module in your Puppet master's module
     path.
